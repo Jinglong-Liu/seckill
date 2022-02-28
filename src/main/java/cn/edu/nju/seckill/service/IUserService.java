@@ -1,6 +1,8 @@
 package cn.edu.nju.seckill.service;
 
 import cn.edu.nju.seckill.pojo.User;
+import cn.edu.nju.seckill.vo.LoginVo;
+import cn.edu.nju.seckill.vo.RespBean;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
@@ -13,4 +15,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IUserService extends IService<User> {
 
+    RespBean doLogin(LoginVo loginVo);
 }
