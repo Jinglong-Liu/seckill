@@ -63,7 +63,7 @@ public class GoodsController {
         return html;
 
     }
-    /*@RequestMapping("/toDetail/{goodsId}")
+    /*@RequestMapping("/detail/{goodsId}")
     @ResponseBody
     public RespBean toDetail(User user, @PathVariable Long goodsId) {
 

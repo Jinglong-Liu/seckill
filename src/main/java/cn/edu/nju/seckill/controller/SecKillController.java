@@ -12,6 +12,7 @@ import cn.edu.nju.seckill.vo.RespBeanEnum;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.conditions.query.QueryChainWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,7 +28,8 @@ public class SecKillController {
     IGoodsService goodsService;
     @Autowired
     ISeckillOrderService seckillOrderService;
-
+    @Autowired
+    private RedisTemplate redisTemplate;
     @RequestMapping("/doSeckill")
     public String doSeckill(Model model, User user, Long goodsId){
         if(user == null){
@@ -39,13 +41,16 @@ public class SecKillController {
             model.addAttribute("errmsg", RespBean.error(RespBeanEnum.EMPTY_STOCK));
             return "secKillFail";
         }
-        final SeckillOrder seckillOrder = seckillOrderService.getOne(new QueryWrapper<SeckillOrder>()
+        /*final SeckillOrder seckillOrder = seckillOrderService.getOne(new QueryWrapper<SeckillOrder>()
                 .eq("user_id", user.getId())
-                .eq("goods_id", goodsId));
+                .eq("goods_id", goodsId));*/
+        SeckillOrder seckillOrder = (SeckillOrder)redisTemplate.opsForValue().get("order:" + user.getId() + ":" + goodsVo.getId());
         if(seckillOrder!=null){
             model.addAttribute("errmsg",RespBeanEnum.REPEATE_ERROR.getMessage());
             return "secKillFail";
         }
+
+
         Order order = orderService.seckill(user,goodsVo);
         model.addAttribute("order",order);
         model.addAttribute("goods",goodsVo);
