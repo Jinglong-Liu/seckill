@@ -2,10 +2,12 @@ package cn.edu.nju.seckill.vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @ToString
 @AllArgsConstructor
+@NoArgsConstructor
 @Data
 public class RespBean {
     private long code;

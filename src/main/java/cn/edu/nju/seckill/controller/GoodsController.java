@@ -26,6 +26,9 @@ import javax.servlet.http.HttpSession;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * windows 优化前 qps（吞吐量） 4642
+ */
 @Controller
 @RequestMapping("/goods")
 public class GoodsController {
