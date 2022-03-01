@@ -3,6 +3,7 @@ package cn.edu.nju.seckill.config;
 import cn.edu.nju.seckill.pojo.User;
 import cn.edu.nju.seckill.service.IUserService;
 import cn.edu.nju.seckill.utils.CookieUtil;
+import cn.edu.nju.seckill.vo.RespBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpRequest;

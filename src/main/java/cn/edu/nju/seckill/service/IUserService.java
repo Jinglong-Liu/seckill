@@ -26,4 +26,15 @@ public interface IUserService extends IService<User> {
      * @return
      */
     User getUserByCookie(String userTicket, HttpServletRequest request, HttpServletResponse response);
+
+    /**
+     * 如何解决redis数据不一致？
+     * @param userTicket
+     * @param password
+     * @param request
+     * @param response
+     * @return
+     */
+    RespBean updatePassword(String userTicket, String password, HttpServletRequest request,
+                            HttpServletResponse response);
 }
