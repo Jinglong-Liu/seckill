@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.extension.conditions.update.UpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,6 +52,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     @Transactional
     @Override
     public Order seckill(User user, GoodsVo goods) {
+        ValueOperations valueOperations = redisTemplate.opsForValue();
         // 1、减库存
         SeckillGoods seckillGoods = seckillGoodsService.getOne(new QueryWrapper<SeckillGoods>()
                 .eq("goods_id",goods.getId()));
@@ -60,7 +62,13 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                 .setSql("stock_count = stock_count - 1")
                 .eq("id", seckillGoods.getId())
                 .gt("stock_count", 0));
-        if(!seckillGoodsResult){
+        /*if(!seckillGoodsResult){
+            return null;
+        }*/
+        // 判断是否有库存。
+
+        if(seckillGoods.getStockCount() < 0){
+            valueOperations.set("isStockEmpty:" + goods.getId(),"0");
             return null;
         }
         Order order = new Order();

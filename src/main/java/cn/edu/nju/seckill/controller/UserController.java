@@ -20,8 +20,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 @RequestMapping("/user")
 public class UserController {
-    @Autowired
-    MQSender mqSender;
+    //@Autowired
+    //MQSender mqSender;
     /**
      * 用于测试
      * @param user
@@ -36,7 +36,7 @@ public class UserController {
     /**
      * 测试发送rabbit mq 消息
      */
-    @RequestMapping("/mq")
+    /*@RequestMapping("/mq")
     @ResponseBody
     public void mq(){
         mqSender.send("hello");
@@ -81,5 +81,5 @@ public class UserController {
     @ResponseBody
     public void mqHeader02(){
         mqSender.send08("hello head02");
-    }
+    }*/
 }
