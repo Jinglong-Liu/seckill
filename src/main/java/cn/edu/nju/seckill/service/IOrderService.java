@@ -3,6 +3,7 @@ package cn.edu.nju.seckill.service;
 import cn.edu.nju.seckill.pojo.Order;
 import cn.edu.nju.seckill.pojo.User;
 import cn.edu.nju.seckill.vo.GoodsVo;
+import cn.edu.nju.seckill.vo.OrderDetailVo;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
@@ -16,4 +17,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
 public interface IOrderService extends IService<Order> {
 
     Order seckill(User user, GoodsVo goodsVo);
+
+    OrderDetailVo detail(Long orderId);
 }

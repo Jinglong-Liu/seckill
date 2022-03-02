@@ -1,4 +1,21 @@
 spring:
+  # static resource
+  resources:
+    # 默认启用
+    add-mappings: true
+    cache:
+      cachecontrol:
+        max-age: 3600
+    chain:
+      # 默认启动
+      cache: true
+      # 启用资源链 默认false
+      enabled: true
+      # 压缩资源（gzip,brotli) 默认禁用
+      compressed: true
+      #h5 缓存 默认false
+      html-application-cache: true
+    static-locations: classpath:/static/
   thymeleaf:
     # close cache
     cache: false

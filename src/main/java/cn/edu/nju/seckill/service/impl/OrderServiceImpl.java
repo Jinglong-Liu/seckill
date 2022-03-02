@@ -1,5 +1,6 @@
 package cn.edu.nju.seckill.service.impl;
 
+import cn.edu.nju.seckill.exception.GlobalException;
 import cn.edu.nju.seckill.mapper.OrderMapper;
 import cn.edu.nju.seckill.pojo.Order;
 import cn.edu.nju.seckill.pojo.SeckillGoods;
@@ -10,6 +11,8 @@ import cn.edu.nju.seckill.service.IOrderService;
 import cn.edu.nju.seckill.service.ISeckillGoodsService;
 import cn.edu.nju.seckill.service.ISeckillOrderService;
 import cn.edu.nju.seckill.vo.GoodsVo;
+import cn.edu.nju.seckill.vo.OrderDetailVo;
+import cn.edu.nju.seckill.vo.RespBeanEnum;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.conditions.update.UpdateChainWrapper;
@@ -41,6 +44,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
     @Autowired
     OrderMapper orderMapper;
+
+    @Autowired
+    IGoodsService goodsService;
 
     @Transactional
     @Override
@@ -82,5 +88,23 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
         redisTemplate.opsForValue().set("order:"+user.getId()+":"+goods.getId(),seckillOrder);
         return order;
+    }
+
+    /**
+     * 订单详情
+     * @param orderId
+     * @return
+     */
+    @Override
+    public OrderDetailVo detail(Long orderId) {
+        if(orderId == null){
+            throw new GlobalException(RespBeanEnum.ORDER_NOT_EXIST);
+        }
+        Order order = orderMapper.selectById(orderId);
+        GoodsVo goodsVo = goodsService.findGoodsVoByGoodsId(order.getGoodsId());
+        OrderDetailVo detailVo = new OrderDetailVo();
+        detailVo.setOrder(order);
+        detailVo.setGoodsVo(goodsVo);
+        return detailVo;
     }
 }
