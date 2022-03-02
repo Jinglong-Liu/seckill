@@ -63,7 +63,7 @@ public class GoodsController {
         return html;
 
     }
-    /*@RequestMapping("/detail/{goodsId}")
+    @RequestMapping("/detail/{goodsId}")
     @ResponseBody
     public RespBean toDetail(User user, @PathVariable Long goodsId) {
 
@@ -93,9 +93,9 @@ public class GoodsController {
         detailVo.setSecKillStatus(secKillStatus);
         detailVo.setRemainSeconds(remainSeconds);
         return RespBean.success(detailVo);
-    }*/
+    }
 
-    @RequestMapping(value = "/toDetail/{goodsId}", produces = "text/html;charset=utf-8")
+    /*@RequestMapping(value = "/toDetail/{goodsId}", produces = "text/html;charset=utf-8")
     @ResponseBody
     public String toDetail(Model model, User user, @PathVariable Long goodsId,
                             HttpServletRequest request, HttpServletResponse response) {
@@ -137,5 +137,5 @@ public class GoodsController {
         }
         return html;
         // return "goodsDetail";
-    }
+    }*/
 }

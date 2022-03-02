@@ -1,6 +1,4 @@
 <!DOCTYPE html>
-<!--<html lang="en"
-      xmlns:th="http://www.thymeleaf.org">-->
 <head>
     <meta charset="UTF-8">
     <title>商品详情</title>
@@ -42,11 +40,10 @@
                 <span  id="seckillTip"></span>
             </td>
             <td>
-                <form id="seckillForm" method="post"
-                      action="/seckill/doSeckill">
+                <form id="seckillForm" method="post" action="/seckill/doSeckill">
+                    <input type="hidden" name="goodsId" id="goodsId">
                     <button class="btn btn-primary btn-block" type="submit"
                             id="buyButton">立即秒杀</button>
-                    <input type="hidden" name="goodsId" id="goodsId"/>
                 </form>
             </td>
         </tr>
@@ -72,9 +69,9 @@
         getDetails();
     });
     function getDetails(){
-        var goodId = g_getQueryString("goodsId")
+        var goodsId = g_getQueryString("goodsId")
         $.ajax({
-            url:'goods/detail/'+goodId,
+            url:'/goods/detail/'+goodsId,
             type:'GET',
             success:function (data){
                 if(data.code == 200){
@@ -82,7 +79,7 @@
                 } else{
                     layer.msg("客户端请求出错");
                 }
-            }
+            },
             error:function (){
                 layer.msg("客户端请求出错");
             }
