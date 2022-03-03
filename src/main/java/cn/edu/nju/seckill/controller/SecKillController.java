@@ -1,5 +1,6 @@
 package cn.edu.nju.seckill.controller;
 
+import cn.edu.nju.seckill.config.AccessLimit;
 import cn.edu.nju.seckill.exception.GlobalException;
 import cn.edu.nju.seckill.pojo.Order;
 import cn.edu.nju.seckill.pojo.SeckillMessage;
@@ -28,6 +29,7 @@ import org.springframework.ui.Model;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
@@ -99,10 +101,13 @@ public class SecKillController implements InitializingBean {
      */
     @GetMapping("/path")
     @ResponseBody
-    public RespBean getPath(User user,Long goodsId,String captcha){
+    @AccessLimit(second=5,maxCount=5,needLogin=true)
+    public RespBean getPath(User user, Long goodsId, String captcha, HttpServletRequest request){
         if(user == null){
             return RespBean.error(RespBeanEnum.SESSION_ERROR);
         }
+
+
         //验证码
         boolean check = orderService.checkCaptcha(user,goodsId,captcha);
         if(!check){
