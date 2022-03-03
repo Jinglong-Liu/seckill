@@ -1,5 +1,6 @@
 package cn.edu.nju.seckill.controller;
 
+import cn.edu.nju.seckill.exception.GlobalException;
 import cn.edu.nju.seckill.pojo.Order;
 import cn.edu.nju.seckill.pojo.SeckillMessage;
 import cn.edu.nju.seckill.pojo.SeckillOrder;
@@ -15,6 +16,8 @@ import cn.edu.nju.seckill.vo.RespBeanEnum;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.conditions.query.QueryChainWrapper;
 
+import com.wf.captcha.ArithmeticCaptcha;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -25,8 +28,12 @@ import org.springframework.ui.Model;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
+@Slf4j
 @Controller
 @RequestMapping("/seckill")
 public class SecKillController implements InitializingBean {
@@ -131,5 +138,27 @@ public class SecKillController implements InitializingBean {
             redisTemplate.opsForValue().set("seckillGoods:" + goodsVo.getId(),goodsVo.getStockCount());
             emptyStockMap.put(goodsVo.getId(),false);//有库存
         });
+    }
+    /**
+     * 验证码
+     */
+    @GetMapping("/captcha")
+    public void verifyCode(User user, Long goodsId, HttpServletResponse response){
+        if(user == null || goodsId < 0){
+            throw new GlobalException(RespBeanEnum.REQUEST_ILLEGAL);
+        }
+        response.setContentType("image/jpg");
+        response.setHeader("Pargam","No-cache");//每次获取新的验证码
+        response.setHeader("Cache-control","No-cache");
+        //验证码 redis 失效时间
+        ArithmeticCaptcha captcha = new ArithmeticCaptcha(130, 32,3);
+        redisTemplate.opsForValue().set("captcha:" + user.getId()+":" + goodsId,captcha.text(),300, TimeUnit.SECONDS);
+
+        try {
+            captcha.out(response.getOutputStream());  // 输出验证码
+        } catch (IOException e) {
+            e.printStackTrace();
+            log.error("验证码生成失败",e.getMessage());
+        }
     }
 }
