@@ -95,7 +95,7 @@ public class UserUtil {
         System.out.println("over");
     }
     private static Connection getConn() throws Exception {
-        String url = "jdbc:mysql://172.24.54.224:3306/seckill?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai";
+        String url = "jdbc:mysql://127.0.0.1:3306/seckill?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai";
         String username = "root";
         String password = "1234";
         String driver = "com.mysql.cj.jdbc.Driver";
