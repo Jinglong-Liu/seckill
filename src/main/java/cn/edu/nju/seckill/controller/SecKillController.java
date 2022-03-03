@@ -23,10 +23,7 @@ import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
@@ -50,13 +47,18 @@ public class SecKillController implements InitializingBean {
 
     private Map<Long,Boolean> emptyStockMap = new HashMap<>();
 
-    @PostMapping("/doSeckill")
+    @PostMapping("/{path}/doSeckill")
     @ResponseBody
-    public RespBean doSeckill(Model model, User user, Long goodsId){
+    public RespBean doSeckill(@PathVariable String path, User user, Long goodsId){
         if(user == null){
             return RespBean.error(RespBeanEnum.SESSION_ERROR);
         }
         ValueOperations valueOperations = redisTemplate.opsForValue();
+
+        boolean check = orderService.checkPath(user,goodsId,path);
+        if(!check){
+            return RespBean.error(RespBeanEnum.REQUEST_ILLEGAL);
+        }
         // 避免重复抢购
         SeckillOrder seckillOrder = (SeckillOrder)valueOperations.get("order:" + user.getId() + ":" + goodsId);
         if(seckillOrder!=null){
@@ -81,6 +83,23 @@ public class SecKillController implements InitializingBean {
         return RespBean.success(0);// 排队中
 
     }
+
+    /**
+     * 秒杀地址
+     * @param user
+     * @param goodsId
+     * @return
+     */
+    @GetMapping("/path")
+    @ResponseBody
+    public RespBean getPath(User user,Long goodsId){
+        if(user == null){
+            return RespBean.error(RespBeanEnum.SESSION_ERROR);
+        }
+        String str = orderService.createPath(user,goodsId);
+        return RespBean.success(str);
+    }
+
 
     /**
      * 获取秒杀结果
@@ -113,30 +132,4 @@ public class SecKillController implements InitializingBean {
             emptyStockMap.put(goodsVo.getId(),false);//有库存
         });
     }
-    /*@RequestMapping("/doSeckill")
-    public String doSeckill(Model model, User user, Long goodsId){
-        if(user == null){
-            return "login";
-        }
-        model.addAttribute("user",user);
-        GoodsVo goodsVo = goodsService.findGoodsVoByGoodsId(goodsId);
-        if(goodsVo.getStockCount() < 1){
-            model.addAttribute("errmsg", RespBean.error(RespBeanEnum.EMPTY_STOCK));
-            return "secKillFail";
-        }
-        *//*final SeckillOrder seckillOrder = seckillOrderService.getOne(new QueryWrapper<SeckillOrder>()
-                .eq("user_id", user.getId())
-                .eq("goods_id", goodsId));*//*
-        SeckillOrder seckillOrder = (SeckillOrder)redisTemplate.opsForValue().get("order:" + user.getId() + ":" + goodsVo.getId());
-        if(seckillOrder!=null){
-            model.addAttribute("errmsg",RespBeanEnum.REPEATE_ERROR.getMessage());
-            return "secKillFail";
-        }
-
-
-        Order order = orderService.seckill(user,goodsVo);
-        model.addAttribute("order",order);
-        model.addAttribute("goods",goodsVo);
-        return "orderDetail";
-    }*/
 }
