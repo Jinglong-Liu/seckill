@@ -1,6 +1,7 @@
 package cn.edu.nju.seckill.controller;
 
 import cn.edu.nju.seckill.config.AccessLimit;
+import cn.edu.nju.seckill.config.RateLimit;
 import cn.edu.nju.seckill.exception.GlobalException;
 import cn.edu.nju.seckill.pojo.Order;
 import cn.edu.nju.seckill.pojo.SeckillMessage;
@@ -57,6 +58,7 @@ public class SecKillController implements InitializingBean {
     private Map<Long,Boolean> emptyStockMap = new HashMap<>();
 
     @PostMapping("/{path}/doSeckill")
+    //@RateLimit(limitNum = 2,name = "rateLimit")
     @ResponseBody
     public RespBean doSeckill(@PathVariable String path, User user, Long goodsId){
         if(user == null){
@@ -101,7 +103,8 @@ public class SecKillController implements InitializingBean {
      */
     @GetMapping("/path")
     @ResponseBody
-    @AccessLimit(second=5,maxCount=5,needLogin=true)
+    //AccessLimit(second=5,maxCount=5,needLogin=true)
+    @RateLimit(limitNum = 2,name = "rating limit")
     public RespBean getPath(User user, Long goodsId, String captcha, HttpServletRequest request){
         if(user == null){
             return RespBean.error(RespBeanEnum.SESSION_ERROR);
